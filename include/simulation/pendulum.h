@@ -14,16 +14,20 @@ namespace simulation {
         math::Vec2 get_cart_position() const;
         math::Vec2 get_pendulum_position() const;
 
-        void update(float force, float dt);
-    private:
-        float length_;
-        float cart_mass_;
-        float pendulum_mass_;
+        void add_force(float force);
 
-        float cart_position_;
-        float cart_velocity_;
-        float theta_;
-        float omega_;
+        void update(float dt);
+    private:
+        float length_ = 0.f;
+        float cart_mass_ = 0.f;
+        float pendulum_mass_ = 0.f;
+
+        float cart_position_ = 0.f;
+        float cart_velocity_ = 0.f;
+        float theta_ = 0.f;
+        float omega_ = 0.f;
+
+        float force_ = 0.f;
     };
 
 } // namespace simulation

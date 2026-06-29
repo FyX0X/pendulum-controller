@@ -40,9 +40,11 @@ namespace simulation {
 
 #pragma endregion
 
+    void Pendulum::add_force(float force) {
+        force_ += force;
+    }
 
-
-    void Pendulum::update(float force, float dt) {
+    void Pendulum::update(float dt) {
         // Constants
         static constexpr float g = 9.81; // gravity
 
@@ -54,7 +56,7 @@ namespace simulation {
         float c = b;
         float d = pendulum_mass_ * length_ * length_;
 
-        float e = force + pendulum_mass_ * length_ * sin_theta * omega_ * omega_;
+        float e = force_ + pendulum_mass_ * length_ * sin_theta * omega_ * omega_;
         float f = pendulum_mass_ * length_ * g * sin_theta;
 
 
@@ -72,6 +74,9 @@ namespace simulation {
         cart_position_ += cart_velocity_ * dt;
         omega_ += alpha * dt;
         theta_ += omega_ * dt;
+
+        // reset force after each update
+        force_ = 0.0;
     }
 
 
