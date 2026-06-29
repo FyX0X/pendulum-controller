@@ -21,8 +21,19 @@ int main()
 				window.close();
 		}
 
+		// check for user input
+		float force = 0.0;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
+			force -= 10.0; // apply force to the left
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
+			force += 10.0; // apply force to the right
+		}
+		pendulum.add_force(force);
+
+
 		// Update the pendulum state
-		pendulum.update( 0.0, 1.0 / 60.0 );
+		pendulum.update( 1.0 / 60.0 );
 
 
 		window.clear();
