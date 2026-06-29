@@ -1,6 +1,13 @@
 #include <SFML/Graphics.hpp>
+#include <cmath>
+
 #include "simulation/pendulum.h"
 #include "rendering/pendulum_renderer.h"
+#include "control/manual_controller.h"
+
+
+static constexpr float kMaxForce = 10.f;
+
 
 int main()
 {
@@ -13,6 +20,8 @@ int main()
 
 	rendering::PendulumRenderer renderer;
 
+	std::unique_ptr<control::Controller> controller = std::make_unique<control::ManualController>();
+
 	while ( window.isOpen() )
 	{
 		while ( const std::optional event = window.pollEvent() )
@@ -22,13 +31,8 @@ int main()
 		}
 
 		// check for user input
-		float force = 0.0;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
-			force -= 10.0; // apply force to the left
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
-			force += 10.0; // apply force to the right
-		}
+		float force = controller->compute_force(pendulum.get_state());
+		force = std::clamp(force, -kMaxForce, kMaxForce);
 		pendulum.add_force(force);
 
 

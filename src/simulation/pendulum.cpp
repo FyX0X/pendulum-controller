@@ -3,6 +3,8 @@
 
 namespace simulation {
 
+#pragma region Constructors
+
     Pendulum::Pendulum(float length, float cart_mass, float pendulum_mass) : 
         length_(length), 
         cart_mass_(cart_mass), 
@@ -13,6 +15,10 @@ namespace simulation {
         omega_(0.0) 
         {}
 
+#pragma endregion
+
+#pragma region Setters
+
     void Pendulum::set_state(float cart_position, float cart_velocity, float theta, float omega) {
         cart_position_ = cart_position;
         cart_velocity_ = cart_velocity;
@@ -20,13 +26,17 @@ namespace simulation {
         omega_ = omega;
     }
 
+#pragma endregion
+
 #pragma region Getters
 
-    void Pendulum::get_state(float& cart_position, float& cart_velocity, float& theta, float& omega) const {
-        cart_position = cart_position_;
-        cart_velocity = cart_velocity_;
-        theta = theta_;
-        omega = omega_;
+    PendulumState Pendulum::get_state() const {
+        return PendulumState{
+            cart_position_,
+            cart_velocity_,
+            theta_,
+            omega_
+        };
     }
 
 
@@ -39,6 +49,8 @@ namespace simulation {
     }
 
 #pragma endregion
+
+#pragma region Simulation
 
     void Pendulum::add_force(float force) {
         force_ += force;
@@ -79,5 +91,6 @@ namespace simulation {
         force_ = 0.0;
     }
 
+#pragma endregion
 
 } // namespace simulation
