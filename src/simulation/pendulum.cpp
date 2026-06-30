@@ -62,8 +62,8 @@ namespace simulation {
         static constexpr float g = 9.81; // gravity
 
         // Equations of motion for the inverted pendulum on a cart
-        float sin_theta = sin(theta_);
-        float cos_theta = cos(theta_);
+        float sin_theta = sinf(theta_);
+        float cos_theta = cosf(theta_);
         float a = cart_mass_ + pendulum_mass_;
         float b = pendulum_mass_ * length_ * cos_theta;
         float c = b;
