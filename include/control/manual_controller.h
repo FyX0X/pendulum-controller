@@ -7,7 +7,7 @@ namespace control {
 
     class ManualController : public Controller {
     public:
-        float compute_force(const simulation::PendulumState& state) override {
+        float computeForce(const simulation::PendulumState& state, float dt) override {
             float force = 0.0f;
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
                 force -= 10.0f; // apply force to the left

@@ -19,7 +19,7 @@ namespace simulation {
 
 #pragma region Setters
 
-    void Pendulum::set_state(float cart_position, float cart_velocity, float theta, float omega) {
+    void Pendulum::setState(float cart_position, float cart_velocity, float theta, float omega) {
         cart_position_ = cart_position;
         cart_velocity_ = cart_velocity;
         theta_ = theta;
@@ -30,7 +30,7 @@ namespace simulation {
 
 #pragma region Getters
 
-    PendulumState Pendulum::get_state() const {
+    PendulumState Pendulum::getState() const {
         return PendulumState{
             cart_position_,
             cart_velocity_,
@@ -40,19 +40,20 @@ namespace simulation {
     }
 
 
-    math::Vec2 Pendulum::get_cart_position() const {
+    math::Vec2 Pendulum::getCartPosition() const {
         return math::Vec2{cart_position_, 0.0};
     }
-    math::Vec2 Pendulum::get_pendulum_position() const {
+    
+    math::Vec2 Pendulum::getPendulumPosition() const {
         // screen space has y-axis pointing down, so we invert the y-coordinate
-        return get_cart_position() + math::Vec2{length_ * sinf(theta_), -length_ * cosf(theta_)};
+        return getCartPosition() + math::Vec2{length_ * sinf(theta_), -length_ * cosf(theta_)};
     }
 
 #pragma endregion
 
 #pragma region Simulation
 
-    void Pendulum::add_force(float force) {
+    void Pendulum::addForce(float force) {
         force_ += force;
     }
 

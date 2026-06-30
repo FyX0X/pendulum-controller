@@ -5,13 +5,14 @@
 #include "simulation/pendulum.h"
 #include "rendering/pendulum_renderer.h"
 #include "control/manual_controller.h"
+#include "control/PID_controller.h"
 
 
 static constexpr float kMaxForce = 10.f;
 static constexpr float kCameraSpeed = 1.f;
 
 
-void update_camera(sf::RenderWindow &window, sf::View &view, float dt);
+void updateCamera(sf::RenderWindow &window, sf::View &view, float mouse_scroll, float dt);
 
 
 int main()
@@ -50,28 +51,36 @@ int main()
 
 	// simulation
 	simulation::Pendulum pendulum( 1.0, 1.0, 0.5 );
-	pendulum.set_state( 0.0, 0.0, 3.14 / 4.0 * 3.0, 0.0 );
+	pendulum.setState( 0.0, 0.0, 0.01, 0.0 );
 
 	float dt = 1.0 / 60.0;
 
 	// control
-	std::unique_ptr<control::Controller> controller = std::make_unique<control::ManualController>();
+	// std::unique_ptr<control::Controller> controller = std::make_unique<control::ManualController>();
+	std::unique_ptr<control::Controller> controller = std::make_unique<control::PIDController>(50.f, 0.f, 0.f);
 
 	while ( window.isOpen() )
 	{
+		float mouse_scroll = 0;
 		while ( const std::optional event = window.pollEvent() )
 		{
-			if ( event->is<sf::Event::Closed>() )
+			if ( event->is<sf::Event::Closed>() ) {
 				window.close();
+			}
+			else if (const auto* mouse_wheel_scrolled = event->getIf<sf::Event::MouseWheelScrolled>()) {
+				if (mouse_wheel_scrolled->wheel == sf::Mouse::Wheel::Vertical) {
+					mouse_scroll = mouse_wheel_scrolled->delta;
+				}
+			}
 		}
 		
 		// check for user input
-		update_camera(window, view, dt);
+		updateCamera(window, view, mouse_scroll, dt);
 
 		// control the system
-		float force = controller->compute_force(pendulum.get_state(), dt);
+		float force = controller->computeForce(pendulum.getState(), dt);
 		force = std::clamp(force, -kMaxForce, kMaxForce);
-		pendulum.add_force(force);
+		pendulum.addForce(force);
 
 
 		// Update the pendulum state
@@ -87,7 +96,9 @@ int main()
 }
 
 
-void update_camera(sf::RenderWindow& window, sf::View &view, float dt) {
+void updateCamera(sf::RenderWindow& window, sf::View &view, float mouse_scroll, float dt) {
+	view.zoom(1.f - mouse_scroll * 0.1f);
+
 	sf::Vector2f displacement = { 0.f, 0.f };
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Z)) {
 		displacement.y -= kCameraSpeed * dt;
@@ -101,6 +112,8 @@ void update_camera(sf::RenderWindow& window, sf::View &view, float dt) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
 		displacement.x += kCameraSpeed * dt;
 	}
-	view.move(displacement);
+	// scale displacement when zoomed
+	float scale = view.getSize().x;
+	view.move(displacement * scale);
 	window.setView(view);
 }

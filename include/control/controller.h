@@ -6,7 +6,7 @@ namespace control {
     class Controller {
     public:
         virtual ~Controller() = default;
-        virtual float compute_force(const simulation::PendulumState& state) = 0;
+        virtual float computeForce(const simulation::PendulumState& state, float dt) = 0;
     };
 
 }

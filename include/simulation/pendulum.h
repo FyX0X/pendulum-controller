@@ -11,17 +11,17 @@ namespace simulation {
     public:
         Pendulum(float length, float cart_mass, float pendulum_mass);
 
-        void set_state(float cart_position, float cart_velocity, float theta, float omega);
-        void set_state(const PendulumState& state) {
-            set_state(state.cart_position, state.cart_velocity, state.theta, state.omega);
+        void setState(float cart_position, float cart_velocity, float theta, float omega);
+        void setState(const PendulumState& state) {
+            setState(state.cart_position, state.cart_velocity, state.theta, state.omega);
         }
 
-        PendulumState get_state() const;
+        PendulumState getState() const;
 
-        math::Vec2 get_cart_position() const;
-        math::Vec2 get_pendulum_position() const;
+        math::Vec2 getCartPosition() const;
+        math::Vec2 getPendulumPosition() const;
 
-        void add_force(float force);
+        void addForce(float force);
 
         void update(float dt);
     private:
