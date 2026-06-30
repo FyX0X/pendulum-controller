@@ -1,7 +1,7 @@
 #pragma once
 
 #include "math/vector.h"
-#include "simulation/pendulum_state.h"
+#include "simulation/pendulum_data.h"
 
 
 namespace simulation {
@@ -17,6 +17,7 @@ namespace simulation {
         }
 
         PendulumState getState() const;
+        PendulumParameters getParameters() const;
 
         math::Vec2 getCartPosition() const;
         math::Vec2 getPendulumPosition() const;

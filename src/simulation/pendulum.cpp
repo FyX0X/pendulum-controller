@@ -39,6 +39,14 @@ namespace simulation {
         };
     }
 
+    PendulumParameters Pendulum::getParameters() const {
+        return PendulumParameters{
+            cart_mass_,
+            pendulum_mass_,
+            length_,
+        };
+    }
+
 
     math::Vec2 Pendulum::getCartPosition() const {
         return math::Vec2{cart_position_, 0.0};

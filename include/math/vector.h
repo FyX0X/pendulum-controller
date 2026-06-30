@@ -56,5 +56,6 @@ namespace math {
 
     using Vec2 = Vec<2>;
     using Vec3 = Vec<3>;
+    using Vec4 = Vec<4>;
 
 }

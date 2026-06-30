@@ -4,8 +4,7 @@
 
 #include "simulation/pendulum.h"
 #include "rendering/pendulum_renderer.h"
-#include "control/manual_controller.h"
-#include "control/PID_controller.h"
+#include "control/controllers.h"
 
 
 static constexpr float kMaxForce = 10.f;
@@ -56,8 +55,9 @@ int main()
 	float dt = 1.0 / 60.0;
 
 	// control
-	// std::unique_ptr<control::Controller> controller = std::make_unique<control::ManualController>();
-	std::unique_ptr<control::Controller> controller = std::make_unique<control::PIDController>(50.f, 0.f, 0.f);
+	std::unique_ptr<control::Controller> manual_controller = std::make_unique<control::ManualController>();
+	// std::unique_ptr<control::Controller> controller = std::make_unique<control::PIDController>(50.f, 0.f, 0.f);
+	std::unique_ptr<control::Controller> controller = std::make_unique<control::LQRController>();
 
 	while ( window.isOpen() )
 	{
@@ -79,6 +79,7 @@ int main()
 
 		// control the system
 		float force = controller->computeForce(pendulum.getState(), dt);
+		force += manual_controller->computeForce(pendulum.getState(), dt);
 		force = std::clamp(force, -kMaxForce, kMaxForce);
 		pendulum.addForce(force);
 

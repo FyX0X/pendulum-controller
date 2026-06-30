@@ -1,5 +1,6 @@
 #pragma once
-#include "simulation/pendulum_state.h"
+
+#include "simulation/pendulum_data.h"
 
 namespace control {
 
