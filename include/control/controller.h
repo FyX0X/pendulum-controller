@@ -2,12 +2,14 @@
 
 #include "simulation/pendulum_data.h"
 
-namespace control {
+namespace control
+{
 
-    class Controller {
+    class Controller
+    {
     public:
         virtual ~Controller() = default;
         virtual float computeForce(const simulation::PendulumState& state, float dt) = 0;
     };
 
-}
+}  // namespace control

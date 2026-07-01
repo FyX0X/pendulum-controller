@@ -1,0 +1,23 @@
+BasedOnStyle: Google
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+BreakBeforeBraces: Linux
+
+ColumnLimit: 120
+
+PointerAlignment: Left
+DerivePointerAlignment: false
+SortIncludes: true
+
+AccessModifierOffset: -4
+NamespaceIndentation: All
+
+MaxEmptyLinesToKeep: 2
+
+BreakConstructorInitializers: AfterColon
+PackConstructorInitializers: Never
+ConstructorInitializerIndentWidth: 4
+
+InsertNewlineAtEOF: true

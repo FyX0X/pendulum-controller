@@ -1,27 +1,31 @@
 #include "simulation/pendulum.h"
+
 #include <cmath>
 
-namespace simulation {
+
+namespace simulation
+{
 
 #pragma region Constructors
 
     Pendulum::Pendulum(const PendulumParameters& params) :
         params_(params)
-    {}
+    {
+    }
 
-    Pendulum::Pendulum(float cart_mass, float pendulum_mass, float length) : 
-        params_({cart_mass, pendulum_mass, length}) 
-    {}
+    Pendulum::Pendulum(float cart_mass, float pendulum_mass, float length) :
+        params_({cart_mass, pendulum_mass, length})
+    {
+    }
 
 #pragma endregion
 
 #pragma region Getters
 
-    math::Vec2 Pendulum::getCartPosition() const {
-        return math::Vec2{state_.cart_position, 0.0};
-    }
-    
-    math::Vec2 Pendulum::getPendulumPosition() const {
+    math::Vec2 Pendulum::getCartPosition() const { return math::Vec2{state_.cart_position, 0.0}; }
+
+    math::Vec2 Pendulum::getPendulumPosition() const
+    {
         // screen space has y-axis pointing down, so we invert the y-coordinate
         float length = params_.length;
         float theta = state_.theta;
@@ -32,13 +36,12 @@ namespace simulation {
 
 #pragma region Simulation
 
-    void Pendulum::addForce(float force) {
-        force_ += force;
-    }
+    void Pendulum::addForce(float force) { force_ += force; }
 
-    void Pendulum::update(float dt) {
+    void Pendulum::update(float dt)
+    {
         // Constants
-        static constexpr float g = 9.81; // gravity
+        static constexpr float g = 9.81;  // gravity
         auto [M, m, l] = params_;
         auto [x, xdot, theta, omega] = state_;
 
@@ -67,10 +70,10 @@ namespace simulation {
         theta += omega * dt;
 
         // update variables
-        state_ = { x, xdot, theta, omega };
+        state_ = {x, xdot, theta, omega};
         force_ = 0.0;
     }
 
 #pragma endregion
 
-} // namespace simulation
+}  // namespace simulation

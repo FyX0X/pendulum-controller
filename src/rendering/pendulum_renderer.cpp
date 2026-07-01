@@ -1,7 +1,9 @@
 #include "rendering/pendulum_renderer.h"
+
 #include "math/vector.h"
 
-namespace rendering {
+namespace rendering
+{
 
     PendulumRenderer::PendulumRenderer() :
         mass_(0.1f),
@@ -9,12 +11,13 @@ namespace rendering {
         line_(sf::PrimitiveType::Lines, 2)
     {
         mass_.setFillColor(sf::Color::White);
-        mass_.setOrigin({ 0.1f, 0.1f });
+        mass_.setOrigin({0.1f, 0.1f});
         cart_.setFillColor(sf::Color::Red);
-        cart_.setOrigin({ 1.f, 0.1f });
+        cart_.setOrigin({1.f, 0.1f});
     }
 
-    void PendulumRenderer::draw(simulation::Pendulum& pendulum, sf::RenderWindow& window) {
+    void PendulumRenderer::draw(simulation::Pendulum& pendulum, sf::RenderWindow& window)
+    {
         // Implementation for drawing the pendulum
         math::Vec2 cart_position = pendulum.getCartPosition();
         math::Vec2 pendulum_position = pendulum.getPendulumPosition();
@@ -32,4 +35,4 @@ namespace rendering {
         window.draw(line_);
     }
 
-}
+}  // namespace rendering

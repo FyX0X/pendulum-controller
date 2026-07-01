@@ -4,16 +4,18 @@
 #include "simulation/pendulum_data.h"
 
 
-namespace simulation {
+namespace simulation
+{
 
-
-    class Pendulum {
+    class Pendulum
+    {
     public:
         Pendulum(const PendulumParameters& params);
         Pendulum(float cart_mass, float pendulum_mass, float length);
 
         void setState(const PendulumState& state) { state_ = state; }
-        void setState(float cart_position, float cart_velocity, float theta, float omega) {
+        void setState(float cart_position, float cart_velocity, float theta, float omega)
+        {
             setState({cart_position, cart_velocity, theta, omega});
         }
 
@@ -26,11 +28,12 @@ namespace simulation {
         void addForce(float force);
 
         void update(float dt);
+
     private:
-        PendulumParameters params_ = { 0 };
-        PendulumState state_ = { 0 };
+        PendulumParameters params_ = {0};
+        PendulumState state_ = {0};
 
         float force_ = 0.f;
     };
 
-} // namespace simulation
+}  // namespace simulation

@@ -4,17 +4,21 @@
 #include "controller.h"
 
 
-namespace control {
+namespace control
+{
 
-    class PIDController : public Controller {
+    class PIDController : public Controller
+    {
     public:
         PIDController(float kp, float ki, float kd) :
             kp_(kp),
             ki_(ki),
             kd_(kd)
-        {}
+        {
+        }
 
-        float computeForce(const simulation::PendulumState& state, float dt) override {
+        float computeForce(const simulation::PendulumState& state, float dt) override
+        {
             integral_ += state.theta * dt;
 
             return kp_ * state.theta + ki_ * integral_ + kd_ * state.omega;
@@ -28,4 +32,4 @@ namespace control {
         float integral_ = 0;
     };
 
-}
+}  // namespace control
