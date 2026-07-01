@@ -43,7 +43,7 @@ int main()
 	// pendulum.setState( 0.0, 0.0, 0.01, 0.0 );
 	
 	simulation::DoublePendulum pendulum( 1.f, 0.5f, 0.5f, 1.f, 1.f );
-	pendulum.setState( 0.f, 0.f, -0.3f, 0.f, 0.5f, 0.f );
+	pendulum.setState( 0.f, 0.f, 0.01f, 0.f, 0.f, 0.f );
 	
 	float dt = 1.0 / 60.0;
 

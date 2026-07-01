@@ -23,6 +23,8 @@ namespace simulation {
         math::Vec3 to_vec() const {
             return {cart_mass, pendulum_mass, length};
         }
+
+        bool operator==(const PendulumParameters&) const = default;
     };
 
     struct DoublePendulumState {
@@ -36,6 +38,7 @@ namespace simulation {
         math::Vec<6> to_vec() const {
             return {x, xdot, theta1, omega1, theta2, omega2};
         }
+
     };
 
     struct DoublePendulumParameters {
@@ -48,6 +51,9 @@ namespace simulation {
         math::Vec<5> to_vec() const {
             return {M, m1, m2, l1, l2};
         }
+
+
+        bool operator==(const DoublePendulumParameters&) const = default;
     };
 
 } // namespace simulation
