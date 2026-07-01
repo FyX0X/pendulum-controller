@@ -19,19 +19,19 @@ namespace simulation {
 #pragma region Getters
 
     math::Vec2 DoublePendulum::getCartPosition() const {
-        return math::Vec2{state_.x, 0.0};
+        return math::Vec2{state_.cart_position, 0.0};
     }
     
     math::Vec2 DoublePendulum::getFirstMassPosition() const {
         // screen space has y-axis pointing down, so we invert the y-coordinate
-        float l1 = params_.l1;
+        float l1 = params_.length1;
         float theta1 = state_.theta1;
         return getCartPosition() + math::Vec2{l1 * sinf(theta1), -l1 * cosf(theta1)};
     }
 
     math::Vec2 DoublePendulum::getSecondMassPosition() const {
         // screen space has y-axis pointing down, so we invert the y-coordinate
-        float l2 = params_.l2;
+        float l2 = params_.length2;
         float theta2 = state_.theta2;
         return getFirstMassPosition() + math::Vec2{l2 * sinf(theta2), -l2 * cosf(theta2)};
     }

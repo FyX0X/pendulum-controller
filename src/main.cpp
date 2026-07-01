@@ -39,7 +39,7 @@ int main()
 	rendering::DoublePendulumRenderer renderer;
 
 	// simulation
-	// simulation::Pendulum pendulum( 1.0, 1.0, 0.5 );
+	// simulation::Pendulum pendulum( 1.0, 0.5, 1.f );
 	// pendulum.setState( 0.0, 0.0, 0.01, 0.0 );
 	
 	simulation::DoublePendulum pendulum( 1.f, 0.5f, 0.5f, 1.f, 1.f );
@@ -50,7 +50,7 @@ int main()
 	// control
 	// std::unique_ptr<control::Controller> manual_controller = std::make_unique<control::ManualController>();
 	// std::unique_ptr<control::Controller> controller = std::make_unique<control::PIDController>(50.f, 0.f, 0.f);
-	// std::unique_ptr<control::Controller> controller = std::make_unique<control::LQRController>();
+	// std::unique_ptr<control::Controller> controller = std::make_unique<control::LQRController>(pendulum.getParameters());
 	
 	std::unique_ptr<control::DoubleController> manual_controller = std::make_unique<control::ManualDoubleController>();
 	std::unique_ptr<control::DoubleController> controller = std::make_unique<control::LQRDoubleController>(pendulum.getParameters());

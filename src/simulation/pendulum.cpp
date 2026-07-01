@@ -5,56 +5,27 @@ namespace simulation {
 
 #pragma region Constructors
 
-    Pendulum::Pendulum(float length, float cart_mass, float pendulum_mass) : 
-        length_(length), 
-        cart_mass_(cart_mass), 
-        pendulum_mass_(pendulum_mass),
-        cart_position_(0.0), 
-        cart_velocity_(0.0), 
-        theta_(0.0), 
-        omega_(0.0) 
-        {}
+    Pendulum::Pendulum(const PendulumParameters& params) :
+        params_(params)
+    {}
 
-#pragma endregion
-
-#pragma region Setters
-
-    void Pendulum::setState(float cart_position, float cart_velocity, float theta, float omega) {
-        cart_position_ = cart_position;
-        cart_velocity_ = cart_velocity;
-        theta_ = theta;
-        omega_ = omega;
-    }
+    Pendulum::Pendulum(float cart_mass, float pendulum_mass, float length) : 
+        params_({cart_mass, pendulum_mass, length}) 
+    {}
 
 #pragma endregion
 
 #pragma region Getters
 
-    PendulumState Pendulum::getState() const {
-        return PendulumState{
-            cart_position_,
-            cart_velocity_,
-            theta_,
-            omega_
-        };
-    }
-
-    PendulumParameters Pendulum::getParameters() const {
-        return PendulumParameters{
-            cart_mass_,
-            pendulum_mass_,
-            length_,
-        };
-    }
-
-
     math::Vec2 Pendulum::getCartPosition() const {
-        return math::Vec2{cart_position_, 0.0};
+        return math::Vec2{state_.cart_position, 0.0};
     }
     
     math::Vec2 Pendulum::getPendulumPosition() const {
         // screen space has y-axis pointing down, so we invert the y-coordinate
-        return getCartPosition() + math::Vec2{length_ * sinf(theta_), -length_ * cosf(theta_)};
+        float length = params_.length;
+        float theta = state_.theta;
+        return getCartPosition() + math::Vec2{length * sinf(theta), -length * cosf(theta)};
     }
 
 #pragma endregion
@@ -68,35 +39,35 @@ namespace simulation {
     void Pendulum::update(float dt) {
         // Constants
         static constexpr float g = 9.81; // gravity
+        auto [M, m, l] = params_;
+        auto [x, xdot, theta, omega] = state_;
 
         // Equations of motion for the inverted pendulum on a cart
-        float sin_theta = sinf(theta_);
-        float cos_theta = cosf(theta_);
-        float a = cart_mass_ + pendulum_mass_;
-        float b = pendulum_mass_ * length_ * cos_theta;
+        float sin_theta = sinf(theta);
+        float cos_theta = cosf(theta);
+        float a = M + m;
+        float b = m * l * cos_theta;
         float c = b;
-        float d = pendulum_mass_ * length_ * length_;
+        float d = m * l * l;
 
-        float e = force_ + pendulum_mass_ * length_ * sin_theta * omega_ * omega_;
-        float f = pendulum_mass_ * length_ * g * sin_theta;
-
+        float e = force_ + m * l * sin_theta * omega * omega;
+        float f = m * l * g * sin_theta;
 
         // Calculate the acceleration of the cart and the angular acceleration of the pendulum
         float det = a * d - b * c;
         float inv_det = 1.0 / det;
 
-        float cart_acceleration = (e * d - f * c) * inv_det;
+        float xddot = (e * d - f * c) * inv_det;
         float alpha = (f * a - e * b) * inv_det;
 
+        // calculate new state using simple Euler integration
+        xdot += xddot * dt;
+        x += xdot * dt;
+        omega += alpha * dt;
+        theta += omega * dt;
 
-
-        // Update the state using simple Euler integration
-        cart_velocity_ += cart_acceleration * dt;
-        cart_position_ += cart_velocity_ * dt;
-        omega_ += alpha * dt;
-        theta_ += omega_ * dt;
-
-        // reset force after each update
+        // update variables
+        state_ = { x, xdot, theta, omega };
         force_ = 0.0;
     }
 

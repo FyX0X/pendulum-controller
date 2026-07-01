@@ -11,7 +11,7 @@ namespace simulation {
         float omega = 0;
 
         math::Vec4 to_vec() const {
-            return {cart_position, cart_velocity, theta, omega};
+            return { cart_position, cart_velocity, theta, omega };
         }
     };
 
@@ -21,37 +21,36 @@ namespace simulation {
         float length = 0;
 
         math::Vec3 to_vec() const {
-            return {cart_mass, pendulum_mass, length};
+            return { cart_mass, pendulum_mass, length };
         }
 
         bool operator==(const PendulumParameters&) const = default;
     };
 
     struct DoublePendulumState {
-        float x = 0.f;
-        float xdot = 0.f;
+        float cart_position = 0.f;
+        float cart_velocity = 0.f;
         float theta1 = 0.f;
         float omega1 = 0.f;
         float theta2 = 0.f;
         float omega2 = 0.f;
 
         math::Vec<6> to_vec() const {
-            return {x, xdot, theta1, omega1, theta2, omega2};
+            return { cart_position, cart_velocity, theta1, omega1, theta2, omega2 };
         }
 
     };
 
     struct DoublePendulumParameters {
-        float M = 0.f;
-        float m1 = 0.f;
-        float m2 = 0.f;
-        float l1 = 0.f;
-        float l2 = 0.f;
+        float cart_mass = 0.f;
+        float mass1 = 0.f;
+        float mass2 = 0.f;
+        float length1 = 0.f;
+        float length2 = 0.f;
 
         math::Vec<5> to_vec() const {
-            return {M, m1, m2, l1, l2};
+            return { cart_mass, mass1, mass2, length1, length2 };
         }
-
 
         bool operator==(const DoublePendulumParameters&) const = default;
     };

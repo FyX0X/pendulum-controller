@@ -13,8 +13,8 @@ namespace simulation {
         DoublePendulum(float M, float m1, float m2, float l1, float l2);
         
         void setState(const DoublePendulumState& state) { state_ = state; }
-        void setState(float x, float xdot, float theta1, float omega1, float theta2, float omega2) {
-            setState({x, xdot, theta1, omega1, theta2, omega2});
+        void setState(float cart_position, float cart_velocity, float theta1, float omega1, float theta2, float omega2) {
+            setState({cart_position, cart_velocity, theta1, omega1, theta2, omega2});
         }
 
         DoublePendulumState getState() const { return state_; };
