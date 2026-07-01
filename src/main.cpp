@@ -3,61 +3,57 @@
 #include <iostream>
 
 #include "simulation/pendulum.h"
+#include "simulation/double_pendulum.h"
 #include "rendering/pendulum_renderer.h"
+#include "rendering/double_pendulum_renderer.h"
 #include "control/controllers.h"
 
 
 static constexpr float kMaxForce = 10.f;
 static constexpr float kCameraSpeed = 1.f;
 
+static constexpr unsigned int kWidth = 800;
+static constexpr unsigned int kHeight = 600;
+static constexpr float kWorldWidth = 4.f;
+static constexpr float kWorldHeight = 3.f;
 
+void setupAxis(sf::VertexArray &x_axis, sf::VertexArray &y_axis);
 void updateCamera(sf::RenderWindow &window, sf::View &view, float mouse_scroll, float dt);
 
 
 int main()
 {
-	unsigned int width = 800;
-	unsigned int height = 600;
-	sf::RenderWindow window( sf::VideoMode( { width, height } ), "Pendulum Controller" );
+	sf::RenderWindow window( sf::VideoMode( { kWidth, kHeight } ), "Pendulum Controller" );
 	window.setFramerateLimit(60); // call it once after creating the window
 
 	// view aka camera 
-	float world_width = 4.f;
-	float world_height = 3.f;
-	sf::View view(sf::FloatRect({0.f, 0.f}, {world_width, world_height}));
+	sf::View view(sf::FloatRect({0.f, 0.f}, {kWorldWidth, kWorldHeight}));
 	view.setCenter({0.f, 0.f});
 	window.setView(view);
 
 	// axis
-	sf::Color gray{};
-	gray.r = 64;
-	gray.g = 64;
-	gray.b = 64;
-	sf::VertexArray x_axis(sf::PrimitiveType::Lines, 2);
-	sf::VertexArray y_axis(sf::PrimitiveType::Lines, 2);
+	sf::VertexArray x_axis, y_axis;
+	setupAxis(x_axis, y_axis);
 
-	x_axis[0].position = {-world_width, 0.f};
-	x_axis[1].position = {world_width, 0.f};
-	x_axis[0].color = gray;
-	x_axis[1].color = gray;
-
-	y_axis[0].position = {0.f, -world_height};
-	y_axis[1].position = {0.f, world_height};
-	y_axis[0].color = gray;
-	y_axis[1].color = gray;
-
-	rendering::PendulumRenderer renderer;
+	// rendering::PendulumRenderer renderer;
+	rendering::DoublePendulumRenderer renderer;
 
 	// simulation
-	simulation::Pendulum pendulum( 1.0, 1.0, 0.5 );
-	pendulum.setState( 0.0, 0.0, 0.01, 0.0 );
-
+	// simulation::Pendulum pendulum( 1.0, 1.0, 0.5 );
+	// pendulum.setState( 0.0, 0.0, 0.01, 0.0 );
+	simulation::DoublePendulum pendulum( 1.f, 0.5f, 0.5f, 1.f, 1.f );
+	pendulum.setState( 0.f, 0.f, 0.01f, 0.f, 0.f, 0.f );
+	
 	float dt = 1.0 / 60.0;
 
 	// control
-	std::unique_ptr<control::Controller> manual_controller = std::make_unique<control::ManualController>();
+	// std::unique_ptr<control::Controller> manual_controller = std::make_unique<control::ManualController>();
 	// std::unique_ptr<control::Controller> controller = std::make_unique<control::PIDController>(50.f, 0.f, 0.f);
-	std::unique_ptr<control::Controller> controller = std::make_unique<control::LQRController>();
+	// std::unique_ptr<control::Controller> controller = std::make_unique<control::LQRController>();
+	
+	std::unique_ptr<control::DoubleController> manual_controller = std::make_unique<control::ManualDoubleController>();
+	std::unique_ptr<control::DoubleController> controller = std::make_unique<control::ZeroDoubleController>();
+	
 
 	while ( window.isOpen() )
 	{
@@ -87,6 +83,8 @@ int main()
 		// Update the pendulum state
 		pendulum.update(dt);
 
+		std::cout << "cart pos: " << pendulum.getCartPosition()[0] << std::endl;
+
 
 		window.clear();
 		window.draw(x_axis);
@@ -96,6 +94,25 @@ int main()
 	}
 }
 
+void setupAxis(sf::VertexArray &x_axis, sf::VertexArray &y_axis) {
+	sf::Color gray{};
+	gray.r = 64;
+	gray.g = 64;
+	gray.b = 64;
+
+	x_axis = sf::VertexArray(sf::PrimitiveType::Lines, 2);
+	y_axis = sf::VertexArray(sf::PrimitiveType::Lines, 2);
+
+	x_axis[0].position = {-kWorldWidth, 0.f};
+	x_axis[1].position = {kWorldWidth, 0.f};
+	x_axis[0].color = gray;
+	x_axis[1].color = gray;
+
+	y_axis[0].position = {0.f, -kWorldHeight};
+	y_axis[1].position = {0.f, kWorldHeight};
+	y_axis[0].color = gray;
+	y_axis[1].color = gray;
+}
 
 void updateCamera(sf::RenderWindow& window, sf::View &view, float mouse_scroll, float dt) {
 	view.zoom(1.f - mouse_scroll * 0.1f);

@@ -12,7 +12,7 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(main src/main.cpp src/simulation/pendulum.cpp src/rendering/pendulum_renderer.cpp)
+add_executable(main src/main.cpp src/simulation/pendulum.cpp src/rendering/pendulum_renderer.cpp src/simulation/double_pendulum.cpp src/rendering/double_pendulum_renderer.cpp)
 target_compile_features(main PRIVATE cxx_std_20)
 target_link_libraries(main PRIVATE SFML::Graphics)
 
