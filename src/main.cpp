@@ -53,7 +53,7 @@ int main()
 	// std::unique_ptr<control::Controller> controller = std::make_unique<control::LQRController>();
 	
 	std::unique_ptr<control::DoubleController> manual_controller = std::make_unique<control::ManualDoubleController>();
-	std::unique_ptr<control::DoubleController> controller = std::make_unique<control::ZeroDoubleController>();
+	std::unique_ptr<control::DoubleController> controller = std::make_unique<control::LQRDoubleController>(pendulum.getParameters());
 	
 
 	while ( window.isOpen() )

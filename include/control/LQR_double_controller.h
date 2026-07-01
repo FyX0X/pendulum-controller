@@ -18,7 +18,7 @@ namespace control {
             return - K.dot(state.to_vec());
         }
     private:
-        math::Vec<6> K = { -1.f, -2.54999051f, -41.70452522f, -11.68284606f , 0.f, 0.f};
+        math::Vec<6> K = { 1.f, 3.78963103f, -173.55130299f, -14.94810112f, 191.60489942f, 42.77882854f};
     };
 
 } // namespace control
