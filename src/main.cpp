@@ -41,8 +41,9 @@ int main()
 	// simulation
 	// simulation::Pendulum pendulum( 1.0, 1.0, 0.5 );
 	// pendulum.setState( 0.0, 0.0, 0.01, 0.0 );
+	
 	simulation::DoublePendulum pendulum( 1.f, 0.5f, 0.5f, 1.f, 1.f );
-	pendulum.setState( 0.f, 0.f, 0.01f, 0.f, 0.f, 0.f );
+	pendulum.setState( 0.f, 0.f, -0.3f, 0.f, 0.5f, 0.f );
 	
 	float dt = 1.0 / 60.0;
 
@@ -82,8 +83,6 @@ int main()
 
 		// Update the pendulum state
 		pendulum.update(dt);
-
-		std::cout << "cart pos: " << pendulum.getCartPosition()[0] << std::endl;
 
 
 		window.clear();

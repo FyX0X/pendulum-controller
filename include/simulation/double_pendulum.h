@@ -9,7 +9,7 @@ namespace simulation {
 
     class DoublePendulum {
     public:
-        DoublePendulum(const DoublePendulumState& state);
+        DoublePendulum(const DoublePendulumParameters& params);
         DoublePendulum(float M, float m1, float m2, float l1, float l2);
         
         void setState(const DoublePendulumState& state) { state_ = state; }

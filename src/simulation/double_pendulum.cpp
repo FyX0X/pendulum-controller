@@ -1,16 +1,17 @@
 #include "simulation/double_pendulum.h"
 #include <cmath>
 
+
 namespace simulation {
 
 #pragma region Constructors
 
-    DoublePendulum::DoublePendulum(const DoublePendulumState& state) : 
-        state_(state)
+    DoublePendulum::DoublePendulum(const DoublePendulumParameters& params) : 
+        params_(params)
     {}
     
     DoublePendulum::DoublePendulum(float M, float m1, float m2, float l1, float l2) :
-        state_({ M, m1, m2, l1, l2 })
+        params_({ M, m1, m2, l1, l2 })
     {}
 
 #pragma endregion
@@ -54,7 +55,6 @@ namespace simulation {
         float xddot = (2*m2*(m1 + m2)*(g*sin(theta2) - l1*pow(omega1, 2)*sin(theta1 - theta2))*(M*m1 + M*m2*pow(sin(theta1), 2) - 2*M*m2*sin(theta1)*sin(theta2)*cos(theta1 - theta2) + M*m2*pow(sin(theta2), 2) + pow(m1, 2)*pow(sin(theta1), 2) + m1*m2*pow(sin(theta1), 2))*sin(theta1)*sin(theta1 - theta2) + (g*(m1 + m2)*sin(theta1) - l2*m2*pow(omega2, 2)*sin(theta1 - theta2))*(m1*cos(theta1) + m2*cos(theta1) - m2*cos(theta2)*cos(theta1 - theta2))*(2*M*m1 - M*m2*cos(2*theta1 - 2*theta2) + M*m2 - pow(m1, 2)*cos(2*theta1) + pow(m1, 2) - m1*m2*cos(2*theta1) + m1*m2) - (F + l2*m2*pow(omega2, 2)*sin(theta2) + pow(omega1, 2)*(m1 + m2)*sin(theta1))*(m1 - m2*pow(cos(theta1 - theta2), 2) + m2)*(2*M*m1 - M*m2*cos(2*theta1 - 2*theta2) + M*m2 - pow(m1, 2)*cos(2*theta1) + pow(m1, 2) - m1*m2*cos(2*theta1) + m1*m2))/((M*m1 + M*m2*pow(sin(theta1), 2) - 2*M*m2*sin(theta1)*sin(theta2)*cos(theta1 - theta2) + M*m2*pow(sin(theta2), 2) + pow(m1, 2)*pow(sin(theta1), 2) + m1*m2*pow(sin(theta1), 2))*(2*M*m1 - M*m2*cos(2*theta1 - 2*theta2) + M*m2 - pow(m1, 2)*cos(2*theta1) + pow(m1, 2) - m1*m2*cos(2*theta1) + m1*m2));
         float alpha1 = (m2*(g*sin(theta2) - l1*pow(omega1, 2)*sin(theta1 - theta2))*(M*cos(theta1 - theta2) + m1*sin(theta1)*sin(theta2) + m2*sin(theta1)*sin(theta2)) - (g*(m1 + m2)*sin(theta1) - l2*m2*pow(omega2, 2)*sin(theta1 - theta2))*(M + m1 + m2*pow(sin(theta2), 2)) + (F + l2*m2*pow(omega2, 2)*sin(theta2) + pow(omega1, 2)*(m1 + m2)*sin(theta1))*(m1*cos(theta1) + m2*cos(theta1) - m2*cos(theta2)*cos(theta1 - theta2)))/(l1*(M*m1 + M*m2*pow(sin(theta1), 2) - 2*M*m2*sin(theta1)*sin(theta2)*cos(theta1 - theta2) + M*m2*pow(sin(theta2), 2) + pow(m1, 2)*pow(sin(theta1), 2) + m1*m2*pow(sin(theta1), 2)));
         float alpha2 = (F*m1*sin(theta1)*sin(theta1 - theta2) + F*m2*sin(theta1)*sin(theta1 - theta2) + M*g*m1*sin(theta1)*cos(theta1 - theta2) - M*g*m1*sin(theta2) + M*g*m2*sin(theta1)*cos(theta1 - theta2) - M*g*m2*sin(theta2) + M*l1*m1*pow(omega1, 2)*sin(theta1 - theta2) + M*l1*m2*pow(omega1, 2)*sin(theta1 - theta2) - 1.0/2.0*M*l2*m2*pow(omega2, 2)*sin(2*theta1 - 2*theta2) + l1*pow(m1, 2)*pow(omega1, 2)*pow(sin(theta1), 2)*sin(theta1 - theta2) + 2*l1*m1*m2*pow(omega1, 2)*pow(sin(theta1), 2)*sin(theta1 - theta2) + l1*pow(m2, 2)*pow(omega1, 2)*pow(sin(theta1), 2)*sin(theta1 - theta2) + pow(m1, 2)*pow(omega1, 2)*pow(sin(theta1), 2)*sin(theta1 - theta2) + 2*m1*m2*pow(omega1, 2)*pow(sin(theta1), 2)*sin(theta1 - theta2) + pow(m2, 2)*pow(omega1, 2)*pow(sin(theta1), 2)*sin(theta1 - theta2))/(l2*(M*m1 + M*m2*pow(sin(theta1), 2) - 2*M*m2*sin(theta1)*sin(theta2)*cos(theta1 - theta2) + M*m2*pow(sin(theta2), 2) + pow(m1, 2)*pow(sin(theta1), 2) + m1*m2*pow(sin(theta1), 2)));
-
         // Update the state using simple Euler integration
         xdot += xddot * dt;
         x += xdot * dt;

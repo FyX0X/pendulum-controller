@@ -6,7 +6,7 @@ namespace rendering {
     DoublePendulumRenderer::DoublePendulumRenderer() :
         mass1_(0.1f),
         mass2_(0.1f),
-        cart_(sf::Vector2f(1000.f, .2f)),
+        cart_(sf::Vector2f(1.f, .2f)),
         line1_(sf::PrimitiveType::Lines, 2),
         line2_(sf::PrimitiveType::Lines, 2)
     {
@@ -36,8 +36,8 @@ namespace rendering {
         line1_[0].position = cart_pos_sf;
         line1_[1].position = mass1_pos_sf;
 
-        line1_[0].position = mass1_pos_sf;
-        line1_[1].position = mass2_pos_sf;
+        line2_[0].position = mass1_pos_sf;
+        line2_[1].position = mass2_pos_sf;
 
         window.draw(cart_);
         window.draw(mass1_);
