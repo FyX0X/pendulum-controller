@@ -10,7 +10,8 @@ namespace rendering
         mass2_(0.1f),
         cart_(sf::Vector2f(1.f, .2f)),
         line1_(sf::PrimitiveType::Lines, 2),
-        line2_(sf::PrimitiveType::Lines, 2)
+        line2_(sf::PrimitiveType::Lines, 2),
+        force_(sf::PrimitiveType::Lines, 2)
     {
         mass1_.setFillColor(sf::Color::White);
         mass1_.setOrigin({0.1f, 0.1f});
@@ -18,6 +19,8 @@ namespace rendering
         mass2_.setOrigin({0.1f, 0.1f});
         cart_.setFillColor(sf::Color::Red);
         cart_.setOrigin({0.5f, 0.1f});
+        force_[0].color = sf::Color::Blue;
+        force_[1].color = sf::Color::Blue;
     }
 
     void DoublePendulumRenderer::draw(simulation::DoublePendulum& double_pendulum, sf::RenderWindow& window)
@@ -42,11 +45,15 @@ namespace rendering
         line2_[0].position = mass1_pos_sf;
         line2_[1].position = mass2_pos_sf;
 
+        force_[0].position = cart_pos_sf;
+        force_[1].position = cart_pos_sf + sf::Vector2f(double_pendulum.getAppliedForce() / 5.f, 0);
+
         window.draw(cart_);
         window.draw(mass1_);
         window.draw(mass2_);
         window.draw(line1_);
         window.draw(line2_);
+        window.draw(force_);
     }
 
 }  // namespace rendering

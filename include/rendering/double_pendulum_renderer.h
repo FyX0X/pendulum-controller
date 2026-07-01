@@ -19,6 +19,7 @@ namespace rendering
         sf::RectangleShape cart_;
         sf::VertexArray line1_;
         sf::VertexArray line2_;
+        sf::VertexArray force_;
     };
 
 }  // namespace rendering

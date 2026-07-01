@@ -5,7 +5,7 @@ TabWidth: 4
 UseTab: Never
 BreakBeforeBraces: Linux
 
-ColumnLimit: 120
+ColumnLimit: 0
 
 PointerAlignment: Left
 DerivePointerAlignment: false

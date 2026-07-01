@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <iostream>
+#include <memory>
 
 #include "control/controllers.h"
 #include "rendering/double_pendulum_renderer.h"
@@ -21,6 +22,7 @@ static constexpr float kWorldHeight = 3.f;
 void setupAxis(sf::VertexArray& x_axis, sf::VertexArray& y_axis);
 void updateCamera(sf::RenderWindow& window, sf::View& view, float mouse_scroll, float dt);
 
+sf::VertexArray force_shape{sf::PrimitiveType::Lines, 2};
 
 int main()
 {
@@ -36,27 +38,29 @@ int main()
     sf::VertexArray x_axis, y_axis;
     setupAxis(x_axis, y_axis);
 
-    // rendering::PendulumRenderer renderer;
-    rendering::DoublePendulumRenderer renderer;
-
-    // simulation
-    // simulation::Pendulum pendulum( 1.0, 0.5, 1.f );
-    // pendulum.setState( 0.0, 0.0, 0.01, 0.0 );
-
-    simulation::DoublePendulum pendulum(1.f, 0.5f, 0.5f, 1.f, 1.f);
-    pendulum.setState(0.f, 0.f, 0.01f, 0.f, 0.f, 0.f);
-
+    // timestep
     float dt = 1.0 / 60.0;
 
-    // control
-    // std::unique_ptr<control::Controller> manual_controller = std::make_unique<control::ManualController>();
-    // std::unique_ptr<control::Controller> controller = std::make_unique<control::PIDController>(50.f, 0.f, 0.f);
-    // std::unique_ptr<control::Controller> controller =
-    // std::make_unique<control::LQRController>(pendulum.getParameters());
+    rendering::PendulumRenderer renderer;
+    // rendering::DoublePendulumRenderer renderer;
 
-    std::unique_ptr<control::DoubleController> manual_controller = std::make_unique<control::ManualDoubleController>();
-    std::unique_ptr<control::DoubleController> controller =
-        std::make_unique<control::LQRDoubleController>(pendulum.getParameters());
+    // simulation
+    simulation::Pendulum pendulum(1.0, 0.5, 1.f);
+    pendulum.setState(0.0, 0.0, 3.14, 0.0);
+
+    // simulation::DoublePendulum pendulum(1.f, 0.5f, 0.5f, 1.f, 1.f);
+    // pendulum.setState(0.f, 0.f, 0.01f, 0.f, 0.f, 0.f);
+
+
+    // control
+    std::unique_ptr<control::Controller> manual_controller = std::make_unique<control::ManualController>();
+    // std::unique_ptr<control::Controller> controller = std::make_unique<control::PIDController>(50.f, 0.f, 0.f);
+    // std::unique_ptr<control::Controller> controller = std::make_unique<control::LQRController>(pendulum.getParameters());
+    // std::unique_ptr<control::Controller> controller = std::make_unique<control::EnergyController>(pendulum.getParameters(), 20.f);
+    std::unique_ptr<control::Controller> controller = std::make_unique<control::FullController>(pendulum.getParameters(), 50.f);
+    view.zoom(5);
+    // std::unique_ptr<control::DoubleController> manual_controller = std::make_unique<control::ManualDoubleController>();
+    // std::unique_ptr<control::DoubleController> controller = std::make_unique<control::LQRDoubleController>(pendulum.getParameters());
 
     while (window.isOpen()) {
         float mouse_scroll = 0;
@@ -67,6 +71,10 @@ int main()
                 if (mouse_wheel_scrolled->wheel == sf::Mouse::Wheel::Vertical) {
                     mouse_scroll = mouse_wheel_scrolled->delta;
                 }
+            } else if (const auto* key_press = event->getIf<sf::Event::KeyPressed>()) {
+                if (key_press->scancode == sf::Keyboard::Scancode::Space) {
+                    pendulum.setState({0, 0, 3.14, 0});
+                }
             }
         }
 
@@ -74,14 +82,15 @@ int main()
         updateCamera(window, view, mouse_scroll, dt);
 
         // control the system
-        float force = controller->computeForce(pendulum.getState(), dt);
-        force += manual_controller->computeForce(pendulum.getState(), dt);
+        float override_control = manual_controller->computeForce(pendulum.getState(), dt);
+        float force = override_control != 0.f ? override_control : controller->computeForce(pendulum.getState(), dt);
         force = std::clamp(force, -kMaxForce, kMaxForce);
         pendulum.addForce(force);
 
         // Update the pendulum state
         pendulum.update(dt);
 
+        // rendering
         window.clear();
         window.draw(x_axis);
         window.draw(y_axis);

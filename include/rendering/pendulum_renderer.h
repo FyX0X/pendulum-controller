@@ -17,6 +17,7 @@ namespace rendering
         sf::CircleShape mass_;
         sf::RectangleShape cart_;
         sf::VertexArray line_;
+        sf::VertexArray force_;
     };
 
 }  // namespace rendering

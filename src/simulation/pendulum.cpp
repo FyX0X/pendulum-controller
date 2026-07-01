@@ -1,6 +1,7 @@
 #include "simulation/pendulum.h"
 
 #include <cmath>
+#include <numbers>
 
 
 namespace simulation
@@ -69,8 +70,11 @@ namespace simulation
         omega += alpha * dt;
         theta += omega * dt;
 
+        // wrap theta to [-pi, pi]
+        theta = std::remainder(theta, 2.f * std::numbers::pi_v<float>);
         // update variables
         state_ = {x, xdot, theta, omega};
+        last_frame_force_ = force_;
         force_ = 0.0;
     }
 

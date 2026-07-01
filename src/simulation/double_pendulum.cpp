@@ -114,6 +114,7 @@ namespace simulation
 
         // update actual state
         state_ = {x, xdot, theta1, omega1, theta2, omega2};
+        last_frame_force_ = force_;
         force_ = 0.0;
     }
 

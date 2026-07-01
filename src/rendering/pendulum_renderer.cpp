@@ -8,12 +8,15 @@ namespace rendering
     PendulumRenderer::PendulumRenderer() :
         mass_(0.1f),
         cart_(sf::Vector2f(2.f, .2f)),
-        line_(sf::PrimitiveType::Lines, 2)
+        line_(sf::PrimitiveType::Lines, 2),
+        force_(sf::PrimitiveType::Lines, 2)
     {
         mass_.setFillColor(sf::Color::White);
         mass_.setOrigin({0.1f, 0.1f});
         cart_.setFillColor(sf::Color::Red);
         cart_.setOrigin({1.f, 0.1f});
+        force_[0].color = sf::Color::Blue;
+        force_[1].color = sf::Color::Blue;
     }
 
     void PendulumRenderer::draw(simulation::Pendulum& pendulum, sf::RenderWindow& window)
@@ -29,10 +32,13 @@ namespace rendering
         mass_.setPosition(pendulum_pos_sf);
         line_[0].position = cart_pos_sf;
         line_[1].position = pendulum_pos_sf;
+        force_[0].position = cart_pos_sf;
+        force_[1].position = cart_pos_sf + sf::Vector2f(pendulum.getAppliedForce() / 5.f, 0);
 
         window.draw(cart_);
         window.draw(mass_);
         window.draw(line_);
+        window.draw(force_);
     }
 
 }  // namespace rendering

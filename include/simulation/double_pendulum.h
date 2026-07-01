@@ -26,6 +26,8 @@ namespace simulation
         math::Vec2 getFirstMassPosition() const;
         math::Vec2 getSecondMassPosition() const;
 
+        float getAppliedForce() const { return last_frame_force_; }
+
         void addForce(float force);
 
         void update(float dt);
@@ -35,6 +37,7 @@ namespace simulation
         DoublePendulumState state_ = {0};
 
         float force_ = 0.f;
+        float last_frame_force_ = 0.f;
     };
 
 }  // namespace simulation
