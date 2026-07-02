@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
+#include <filesystem>
 #include <iostream>
 #include <memory>
 
@@ -9,20 +10,22 @@
 #include "simulation/double_pendulum.h"
 #include "simulation/pendulum.h"
 
-#define DOUBLE true
+#define DOUBLE false
+
+inline const std::filesystem::path kProjectDir = PROJECT_SOURCE_DIR;
 
 static constexpr float kMaxForce = 10.f;
 static constexpr float kCameraSpeed = 1.f;
 
 static constexpr unsigned int kWidth = 800;
 static constexpr unsigned int kHeight = 600;
-static constexpr float kWorldWidth = 4.f;
-static constexpr float kWorldHeight = 3.f;
+static constexpr float kWorldWidth = 8.f;
+static constexpr float kWorldHeight = 6.f;
 
 #if DOUBLE
 static constexpr simulation::DoublePendulumState kDefaultState = {0.f, 0.f, 0.01f, 0.f, 0.f, 0.f};
 #else
-static constexpr simulation::PendulumState kDefaultState = {0.0, 0.0, 3.14, 0.0};
+static constexpr simulation::PendulumState kDefaultState = {0.0, 0.0, 0 * 3.141592f, 0.0};
 #endif
 
 
@@ -39,7 +42,6 @@ int main()
     // view aka camera
     sf::View view(sf::FloatRect({0.f, 0.f}, {kWorldWidth, kWorldHeight}));
     view.setCenter({0.f, 0.f});
-    view.zoom(2);
     window.setView(view);
 
     // axis
@@ -62,7 +64,9 @@ int main()
     simulation::Pendulum pendulum(1.0, 0.5, 1.f);
 
     std::unique_ptr<control::Controller> manual_controller = std::make_unique<control::ManualController>();
-    std::unique_ptr<control::Controller> controller = std::make_unique<control::FullController>(pendulum.getParameters(), 20.f);
+    // std::unique_ptr<control::Controller> controller = std::make_unique<control::FullController>(pendulum.getParameters(), 20.f);
+    std::unique_ptr<control::Controller> controller =
+        std::make_unique<control::ai::NeuralController>(kProjectDir / "models" / "stabilize-weights.json");
 #endif
 
     pendulum.setState(kDefaultState);
@@ -79,6 +83,8 @@ int main()
             } else if (const auto* key_press = event->getIf<sf::Event::KeyPressed>()) {
                 if (key_press->scancode == sf::Keyboard::Scancode::Space) {
                     pendulum.setState(kDefaultState);
+                    view.setCenter({0.f, 0.f});
+                    view.setSize(sf::Vector2f({kWorldWidth, kWorldHeight}));
                 }
             }
         }

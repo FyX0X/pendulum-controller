@@ -3,6 +3,7 @@
 #include "LQR_controller.h"
 #include "LQR_double_controller.h"
 #include "PID_controller.h"
+#include "ai/neural_controller.h"
 #include "controller.h"
 #include "double_controller.h"
 #include "energy_controller.h"
