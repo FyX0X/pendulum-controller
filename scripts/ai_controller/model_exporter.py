@@ -27,10 +27,10 @@ def export(path: str) -> None:
         "b3": params["action_net.bias"].tolist(),
     }
 
-    with open(f"{path}-weights.json", "w") as f:
+    with open(f"{path}.json", "w") as f:
         json.dump(weights, f)
 
 if __name__ == "__main__":
 
-    export(f"{ROOT}/pendulum_ai_controller")
+    # export(f"{ROOT}/pendulum_ai_controller")
     export(f"{ROOT}/stabilize")

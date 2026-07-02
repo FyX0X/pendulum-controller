@@ -107,7 +107,7 @@ namespace control::ai
     };
 
     // instantiated with exact sizes from Python output
-    using PendulumMLP = MLP<4, 64, 1>;
+    using PendulumMLP = MLP<5, 64, 1>;
 
 
 }  // namespace control::ai

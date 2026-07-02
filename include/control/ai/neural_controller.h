@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cassert>
+#include <cmath>
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -21,10 +22,18 @@ namespace control::ai
 
         float computeForce(const simulation::PendulumState& state, float dt) override
         {
-            return mlp_.forward(std::array<float, 4>({state.cart_position, state.cart_velocity, state.theta, state.omega}))[0];
+            std::array<float, 5> observation = {state.cart_position,
+                                                state.cart_velocity,
+                                                cosf(state.theta),
+                                                sinf(state.theta),
+                                                state.omega};
+
+
+            return mlp_.forward(observation)[0];
         }
 
     private:
         PendulumMLP mlp_{};
     };
+
 }  // namespace control::ai
