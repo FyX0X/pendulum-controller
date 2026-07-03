@@ -13,7 +13,7 @@ namespace simulation
         Pendulum(const PendulumParameters& params);
         Pendulum(float cart_mass, float pendulum_mass, float length);
 
-        void setState(const PendulumState& state) { state_ = state; }
+        void setState(const PendulumState& state);
         void setState(float cart_position, float cart_velocity, float theta, float omega)
         {
             setState({cart_position, cart_velocity, theta, omega});

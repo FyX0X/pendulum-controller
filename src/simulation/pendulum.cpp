@@ -35,6 +35,16 @@ namespace simulation
 
 #pragma endregion
 
+#pragma region Setters
+
+    void Pendulum::setState(const PendulumState& state)
+    {
+        state_ = state;
+        state_.theta = std::remainder(state_.theta, 2.f * std::numbers::pi_v<float>);
+    }
+
+#pragma endregion
+
 #pragma region Simulation
 
     void Pendulum::addForce(float force) { force_ += force; }
@@ -71,9 +81,8 @@ namespace simulation
         theta += omega * dt;
 
         // wrap theta to [-pi, pi]
-        theta = std::remainder(theta, 2.f * std::numbers::pi_v<float>);
         // update variables
-        state_ = {x, xdot, theta, omega};
+        setState({x, xdot, theta, omega});
         last_frame_force_ = force_;
         force_ = 0.0;
     }
