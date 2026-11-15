@@ -1,117 +1,156 @@
-# CMake SFML Project Template
+# Pendulum Controller
 
-This repository template should allow for a fast and hassle-free kick start of your next SFML project using CMake.
-Thanks to [GitHub's nature of templates](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template), you can fork this repository without inheriting its Git history.
+Pendulum Controller is a C++20 simulation and control project for cart-pole
+systems. It includes a real-time SFML visualizer, several classical
+controllers, a double-pendulum model, and a Python extension for experimenting
+with reinforcement-learning policies.
 
-The template starts out very basic, but might receive additional features over time:
+The project currently focuses on:
 
-- Basic CMake script to build your project and link SFML on any operating system
-- Basic [GitHub Actions](https://github.com/features/actions) script for all major platforms
+- Simulating a single or double inverted pendulum.
+- Swinging a pendulum up and stabilizing it with feedback control.
+- Comparing manual, energy-based, PID, full-state, LQR, and neural controllers.
+- Exporting a trained single-pendulum policy to a self-contained C++ controller.
 
-## Quick start
+## Screenshots
 
-### Command line
+### Single pendulum
 
-1. Install [Git](https://git-scm.com/downloads) and [CMake](https://cmake.org/download/). Use your system's package manager if available.
-2. Follow [GitHub's instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) for how to use their project template feature to create your own project. If you don't want to use GitHub, see the section below.
-3. Clone your new GitHub repo and open the repo in your text editor of choice.
-4. Open [CMakeLists.txt](CMakeLists.txt). Rename the project and the target name of the executable to whatever name you want. Make sure to change all occurrences.
-5. If you want to add or remove any .cpp files, change the source files listed in the `add_executable` call in CMakeLists.txt to match the source files your project requires. If you plan on keeping the default main.cpp file then no changes are required.
-6. If your code uses the Audio or Network modules then add `SFML::Audio` or `SFML::Network` to the `target_link_libraries` call alongside the existing `SFML::Graphics` library that is being linked.
-7. If you use Linux, install SFML's dependencies using your system package manager. On Ubuntu and other Debian-based distributions you can use the following commands:
-   ```
-   sudo apt update
-   sudo apt install \
-       libxrandr-dev \
-       libxcursor-dev \
-       libxi-dev \
-       libudev-dev \
-       libfreetype-dev \
-       libflac-dev \
-       libvorbis-dev \
-       libgl1-mesa-dev \
-       libegl1-mesa-dev \
-       libfreetype-dev \
-       libharfbuzz-dev \
-       libmbedtls-dev \
-       libssh2-1-dev
-   ```
-8. Configure and build your project. Most popular IDEs support CMake projects with very little effort on your part.
+![Single pendulum simulation](images/simple.png)
 
-   - [VS Code](https://code.visualstudio.com) via the [CMake extension](https://code.visualstudio.com/docs/cpp/cmake-linux)
-   - [Visual Studio](https://docs.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-170)
-   - [CLion](https://www.jetbrains.com/clion/features/cmake-support.html)
-   - [Qt Creator](https://doc.qt.io/qtcreator/creator-project-cmake.html)
+### Double pendulum
 
-   Using CMake from the command line is straightforward as well.
-   Be sure to run these commands in the root directory of the project you just created.
+![Double pendulum simulation](images/double1.png)
+![Double pendulum simulation](images/double2.png)
 
-   ```
-   cmake -B build
-   cmake --build build
-   ```
+## Requirements
 
-9. Enjoy!
+- A C++20 compiler.
+- CMake 3.28 or newer.
+- Git, so CMake can download SFML and pybind11 with `FetchContent`.
+- Python and the Python development headers if the `pendulum_pysim` module is
+  built or the Python scripts are used.
+- A graphical environment for the SFML application.
 
-### Visual Studio
+SFML 3.1.0 and pybind11 2.13.6 are downloaded automatically during CMake
+configuration. On Debian or Ubuntu, the SFML build may also require the
+development packages listed in the [SFML Linux dependencies
+documentation](https://github.com/SFML/SFML/blob/3.1.x/README.md#installing-sfml).
 
-Using a Visual Studio workspace is the simplest way to get started on windows.
+## Build and run
 
-1. Ensure you have the [required components installed](https://learn.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio#installation).
-2. Follow [GitHub's instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) for how to use their project template feature to create your own project.
-3. If you have already cloned this repo, you can [open the folder](https://learn.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio0#ide-integration).
-4. If not, you can [clone it directly in Visual Studio](https://learn.microsoft.com/en-us/visualstudio/get-started/tutorial-open-project-from-repo).
+From the repository root:
 
-Visual Studio should automatically configure the CMake project, then you can build and run as normal through Visual Studio. See the links above for more details.
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+./build/bin/main
+```
 
-## Upgrading SFML
+The executable opens the real-time simulation window. The default build runs a
+single pendulum with the full controller: an energy controller swings the
+pendulum up, then an LQR controller stabilizes it.
 
-SFML is found via CMake's [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) module.
-FetchContent automatically downloads SFML from GitHub and builds it alongside your own code.
-Beyond the convenience of not having to install SFML yourself, this ensures ABI compatibility and simplifies things like specifying static versus shared libraries.
+### Controls
 
-Modifying what version of SFML you want is as easy as changing the `GIT_TAG` argument.
-Currently it uses SFML 3 via the `3.1.0` tag.
+| Input | Action |
+| --- | --- |
+| Left arrow | Apply force to the left |
+| Right arrow | Apply force to the right |
+| `Q` / `D` | Move the camera left / right |
+| `Z` / `S` | Move the camera up / down |
+| Mouse wheel | Zoom in or out |
+| Space | Reset the pendulum and camera |
 
-## But I want to...
+Manual input takes priority whenever an arrow key is held. The applied force
+is limited to the range `[-10, 10]`.
 
-Modify CMake options by adding them as configuration parameters (with a `-D` flag) or by modifying the contents of CMakeCache.txt and rebuilding.
+## Choosing the simulation
 
-### Not use GitHub
+The visualizer is configured in [`src/main.cpp`](src/main.cpp). Set the
+`DOUBLE` compile-time flag to `true` to use the double-pendulum simulation and
+its double-controller implementations:
 
-You can use this project without a GitHub account by [downloading the contents](https://github.com/SFML/cmake-sfml-project/archive/refs/heads/master.zip) of the repository as a ZIP archive and unpacking it locally.
-This approach also avoids using Git entirely if you would prefer to not do that.
+```cpp
+#define DOUBLE true
+```
 
-### Change Compilers
+Rebuild after changing the flag:
 
-See the variety of [`CMAKE_<LANG>_COMPILER`](https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER.html) options.
-In particular you'll want to modify `CMAKE_CXX_COMPILER` to point to the C++ compiler you wish to use.
+```sh
+cmake --build build
+./build/bin/main
+```
 
-### Change Compiler Optimizations
+The single-pendulum default parameters are a cart mass of `1`, pendulum mass
+of `0.5`, and pendulum length of `1`. The double-pendulum parameters are
+configured in the same file.
 
-CMake abstracts away specific optimizer flags through the [`CMAKE_BUILD_TYPE`](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html) option.
-By default this project recommends `Release` builds which enable optimizations.
-Other build types include `Debug` builds which enable debug symbols but disable optimizations.
-If you're using a multi-configuration generator (as is often the case on Windows), you can modify the [`CMAKE_CONFIGURATION_TYPES`](https://cmake.org/cmake/help/latest/variable/CMAKE_CONFIGURATION_TYPES.html#variable:CMAKE_CONFIGURATION_TYPES) option.
+## Controllers
 
-### Change Generators
+Controller interfaces and implementations are in
+[`include/control/`](include/control/):
 
-While CMake will attempt to pick a suitable default generator, some systems offer a number of generators to choose from.
-Ubuntu, for example, offers Makefiles and Ninja as two potential options.
-For a list of generators, click [here](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html).
-To modify the generator you're using you must reconfigure your project providing a `-G` flag with a value corresponding to the generator you want.
-You can't simply modify an entry in the CMakeCache.txt file unlike the above options.
-Then you may rebuild your project with this new generator.
+- **Manual**: direct left/right keyboard input.
+- **Zero**: applies no force.
+- **PID**: proportional-integral-derivative feedback.
+- **Energy**: swings the pendulum toward the upright position.
+- **LQR**: stabilizes the linearized system near upright.
+- **Full**: switches between energy-based swing-up and LQR stabilization.
+- **Neural**: loads a serialized multilayer perceptron policy.
 
-## More Reading
+The simulation models are implemented in
+[`include/simulation/`](include/simulation/) and
+[`src/simulation/`](src/simulation/).
 
-Here are some useful resources if you want to learn more about CMake:
+## Python simulation module
 
-- [Official CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/)
-- [How to Use CMake Without the Agonizing Pain - Part 1](https://alexreinking.com/blog/how-to-use-cmake-without-the-agonizing-pain-part-1.html)
-- [How to Use CMake Without the Agonizing Pain - Part 2](https://alexreinking.com/blog/how-to-use-cmake-without-the-agonizing-pain-part-2.html)
-- [Better CMake YouTube series by Jefferon Amstutz](https://www.youtube.com/playlist?list=PL8i3OhJb4FNV10aIZ8oF0AA46HgA2ed8g)
+CMake also builds the `pendulum_pysim` Python extension. It exposes the
+single-pendulum simulator with methods for updating the state, applying force,
+setting state, and reading state:
+
+```python
+import sys
+sys.path.insert(0, "build")
+
+import pendulum_pysim
+
+pendulum = pendulum_pysim.Pendulum(1.0, 0.5, 1.0)
+pendulum.set_state(0.0, 0.0, 3.14159, 0.0)
+pendulum.add_force(0.0)
+pendulum.update(1.0 / 60.0)
+print(pendulum.get_state())
+```
+
+The extension is generated from
+[`src/bindings/pendulum_bindings.cpp`](src/bindings/pendulum_bindings.cpp).
+Python utilities for deriving LQR gains and double-pendulum equations are in
+[`scripts/`](scripts/).
+
+## Neural-controller models
+
+The repository includes serialized policies in [`models/`](models/). The
+single-pendulum neural controller expects a JSON policy with the network
+weights and biases used by the `PendulumMLP` implementation.
+
+To try a neural policy, update the controller selection in
+[`src/main.cpp`](src/main.cpp) and provide the model path relative to the
+project root. For example, `models/stabilize.json` is included in the
+repository.
+
+## Project layout
+
+```text
+include/       Public C++ headers for simulation, control, rendering, and math
+src/           C++ implementations, application entry point, and Python bindings
+scripts/       Python tools for LQR calculations and symbolic dynamics
+models/        Exported neural-network policies
+images/        Screenshots used by this README
+documentation/ Supporting technical documentation
+extern/        Vendored third-party headers
+```
 
 ## License
 
-The source code is dual licensed under Public Domain and MIT -- choose whichever you prefer.
+Pendulum Controller is released under the dual-license terms in
+[`LICENSE.md`](LICENSE.md): Public Domain or MIT, at your option.

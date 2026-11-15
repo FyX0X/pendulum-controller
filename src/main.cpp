@@ -25,7 +25,7 @@ static constexpr float kWorldHeight = 6.f;
 static constexpr float kThetaInit = M_PI;
 
 #if DOUBLE
-static constexpr simulation::DoublePendulumState kDefaultState = {0.f, 0.f, kThetaInit, 0.f, 0.f, 0.f};
+static constexpr simulation::DoublePendulumState kDefaultState = {0.f, 0.f, kThetaInit * 0.01, 0.f, 0.f, 0.f};
 #else
 static constexpr simulation::PendulumState kDefaultState = {0.0, 0.0, kThetaInit, 0.0};
 #endif
@@ -66,8 +66,8 @@ int main()
     simulation::Pendulum pendulum(1.0, 0.5, 1.f);
 
     std::unique_ptr<control::Controller> manual_controller = std::make_unique<control::ManualController>();
-    // std::unique_ptr<control::Controller> controller = std::make_unique<control::FullController>(pendulum.getParameters(), 20.f);
-    std::unique_ptr<control::Controller> controller =
+    std::unique_ptr<control::Controller> controller = std::make_unique<control::FullController>(pendulum.getParameters(), 20.f);
+    // std::unique_ptr<control::Controller> controller =
         std::make_unique<control::ai::NeuralController>(kProjectDir / "models" / "stabilize.json");
 #endif
 
